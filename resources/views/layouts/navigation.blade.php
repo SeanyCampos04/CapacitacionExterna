@@ -18,11 +18,11 @@
 
                     <!-- Mostrar según el rol -->
                     @if (in_array('admin', $user_roles) or in_array('CAD', $user_roles))
-                        <div class="hidden space-x-2 sm:-my-px sm:ml-2 sm:flex">
+                        <!-- <div class="hidden space-x-2 sm:-my-px sm:ml-2 sm:flex">
                             <x-nav-link :href="route('register')" :active="request()->routeIs('register')">
                                 {{ __('Registrar Usuarios') }}
                             </x-nav-link>
-                        </div>
+                        </div> -->
                         <div class="hidden space-x-2 sm:-my-px sm:ml-2 sm:flex">
                             <x-nav-link :href="route('departamentos.create')" :active="request()->routeIs('departamentos.create')">
                                 {{ __('Registrar Departamento') }}
