@@ -32,7 +32,7 @@
             table {
                 width: 100%;
             }
-            
+
             th, td {
                 text-align: center;
                 vertical-align: middle;
@@ -79,6 +79,10 @@
                                         <option value="2022" {{ request('anio') == '2022' ? 'selected' : '' }}>2022</option>
                                         <option value="2023" {{ request('anio') == '2023' ? 'selected' : '' }}>2023</option>
                                         <option value="2024" {{ request('anio') == '2024' ? 'selected' : '' }}>2024</option>
+                                        <option value="2025" {{ request('anio') == '2025' ? 'selected' : '' }}>2025</option>
+                                        <option value="2026" {{ request('anio') == '2026' ? 'selected' : '' }}>2026</option>
+                                        <option value="2027" {{ request('anio') == '2027' ? 'selected' : '' }}>2027</option>
+                                        <option value="2028" {{ request('anio') == '2028' ? 'selected' : '' }}>2028</option>
                                     </select>
                                 </div>
                                 <div class="col-md-4 d-flex align-items-end">
@@ -88,8 +92,8 @@
                         </form>
                     @endif
                 @endif
-    
-            
+
+
             <div class="table-responsive">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500">
                     <thead class="text-xm text-gray-700 bg-gray-50">
@@ -153,21 +157,21 @@
                                         @csrf
                                         @method('DELETE')
                                         @if ($capacitacion->folio)
-                                            <x-primary-button 
-                                                class="bg-red-600 cursor-not-allowed opacity-50" 
+                                            <x-primary-button
+                                                class="bg-red-600 cursor-not-allowed opacity-50"
                                                 disabled>
                                                 🗑
                                             </x-primary-button>
                                         @else
-                                            <x-primary-button 
-                                                class="bg-red-600 hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-0" 
+                                            <x-primary-button
+                                                class="bg-red-600 hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-0"
                                                 onclick="return confirm('¿Estás seguro de que deseas eliminar esta capacitación?');">
                                                 🗑
                                             </x-primary-button>
-                                        @endif   
+                                        @endif
                                     </form>
                                 </td>
-                                
+
                                 @if($tipo_usuario == 1) <!-- Verifica si no es docente para mostrar las acciones -->
                                     @if (in_array('admin', $user_roles) or in_array('CAD', $user_roles))
                                         <td class="text-center">
@@ -175,12 +179,12 @@
                                                 <x-primary-button class="bg-green-600 hover:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-0">
                                                     📄
                                                 </x-primary-button>
-                                            </a> 
-                                        </td>   
+                                            </a>
+                                        </td>
                                         <td class="text-center">
-                                            <x-primary-button 
+                                            <x-primary-button
                                                 class="bg-green-600 hover:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-0"
-                                                data-bs-toggle="modal" 
+                                                data-bs-toggle="modal"
                                                 data-bs-target="#modal-{{ $capacitacion->id }}">
                                                 Detalles
                                             </x-primary-button>
@@ -216,17 +220,17 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </td>                                      
-                                    @endif    
+                                        </td>
+                                    @endif
                                 @endif
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
-            
+
         </div>
-        
+
         <!-- Modal de éxito -->
         <div class="modal" id="successModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
@@ -241,12 +245,12 @@
                         <x-primary-button type="button" class="bg-green-600 hover:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-0" data-bs-dismiss="modal">
                             Cerrar
                         </x-primary-button>
-                        
+
                     </div>
                 </div>
             </div>
         </div>
-    
+
         @if(session('error'))
             <div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
                 {{ session('error') }}
@@ -254,8 +258,8 @@
             </div>
         @endif
 
-        
-        
+
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
