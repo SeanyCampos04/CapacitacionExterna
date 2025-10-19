@@ -35,6 +35,6 @@ class Datos_generale extends Model
 
     public function departamento()
     {
-        return $this->belongsTo(Departamento::class);
+        return $this->belongsTo(Departamento::class , 'departamento_id');
     }
 }

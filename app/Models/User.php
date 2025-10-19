@@ -62,7 +62,7 @@ class User extends Authenticatable
     }
     public function datos_generales()
     {
-        return $this->hasOne(Datos_generale::class);
+        return $this->hasOne(Datos_generale::class, 'user_id');
     }
 
 }

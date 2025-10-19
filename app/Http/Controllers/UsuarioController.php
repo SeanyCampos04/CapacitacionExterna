@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\cursos_instructore;
-use App\Models\cursos_participante;
+use App\Models\User;
 use App\Models\Departamento;
+use App\Models\Role;
 use App\Models\Participante;
 use App\Models\RegistroCapacitacionesExt;
-use App\Models\Role;
-use App\Models\solicitud_docente;
-use App\Models\User;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 
@@ -21,32 +16,33 @@ class UsuarioController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $usuarios = User::all();
+   public function index(Request $request)
+{
+    // Recoge el valor del input (busqueda)
+    $busqueda = $request->input('busqueda');
 
-        return view('usuarios.index', compact('usuarios'));
-    }
+    // Cargamos las relaciones para evitar N+1
+    $usuarios = User::with(['datos_generales.departamento'])
+        ->when($busqueda, function ($query, $busqueda) {
+            $query->where(function ($q) use ($busqueda) {
+                $q->where('email', 'like', "%{$busqueda}%")
+                  ->orWhereHas('datos_generales', function ($sub) use ($busqueda) {
+                      $sub->where('nombre', 'like', "%{$busqueda}%")
+                          ->orWhere('apellido_paterno', 'like', "%{$busqueda}%")
+                          ->orWhere('apellido_materno', 'like', "%{$busqueda}%")
+                          ->orWhereHas('departamento', function ($d) use ($busqueda) {
+                              $d->where('nombre', 'like', "%{$busqueda}%");
+                          });
+                  });
+            });
+        })
+        ->get();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    // Retornamos la vista con la variable $busqueda (para que se mantenga en el input)
+    return view('usuarios.index', compact('usuarios', 'busqueda'));
+}
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
         $usuario = User::find($id);
@@ -56,9 +52,6 @@ class UsuarioController extends Controller
         return view('usuarios.show', compact('usuario', 'capacitaciones'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $usuario = User::find($id);
@@ -68,9 +61,6 @@ class UsuarioController extends Controller
         return view('usuarios.edit', compact('usuario', 'departamentos', 'roles'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
@@ -108,7 +98,6 @@ class UsuarioController extends Controller
         $datosGenerales->rfc = $validated['rfc'];
         $datosGenerales->telefono = $validated['telefono'];
         $datosGenerales->departamento_id = $validated['departamento'];
-
         $datosGenerales->save();
 
         $role_instructor = Role::where('nombre', 'Instructor')->first();
@@ -117,7 +106,6 @@ class UsuarioController extends Controller
             $usuario->roles()->sync($validated['roles']);
 
             if (in_array($role_instructor->id, $validated['roles'])) {
-                // Si el usuario no tiene un registro de instructor, lo crea
                 if (!$usuario->instructor()->exists()) {
                     $usuario->instructor()->create([
                         'user_id' => $usuario->id
@@ -131,9 +119,6 @@ class UsuarioController extends Controller
         return Redirect::route('usuario_datos.index', $usuario->id)->with('status', 'profile-updated');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function activar($id)
     {
         $usuario = User::find($id);
@@ -141,6 +126,7 @@ class UsuarioController extends Controller
         $usuario->save();
         return redirect(route('usuarios.index'));
     }
+
     public function desactivar($id)
     {
         $usuario = User::find($id);
